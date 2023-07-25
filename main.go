@@ -12,15 +12,17 @@ import (
 )
 
 type Movie struct {
-	ID       string    `json: "id"`
-	isbn     string    `json: "isbn"`
-	title    string    `json: "title"`
-	director *Director `json: "director"`
+	ID       string    `json:"id"`
+	Isbn     string    `json:"isbn"`
+	Title    string    `json:"title"`
+	Director *Director `json:"director"`
 }
 type Director struct {
-	firstName string `json: "firstname"`
-	lastName  string `json: "lastname"`
+	FirstName string `json:"firstname"`
+	LastName  string `json:"lastname"`
 }
+
+var movies []Movie
 
 func getAllMovies(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-type", "application/json")
@@ -75,17 +77,15 @@ func updateMovie(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(movies)
 }
 
-var movies []Movie
-
 func main() {
 	r := mux.NewRouter()
-	movies = append(movies, Movie{ID: "1", isbn: "435", title: "one", director: &Director{firstName: "Dat", lastName: "Duong"}})
-	movies = append(movies, Movie{ID: "2", isbn: "468", title: "two", director: &Director{firstName: "Tu", lastName: "Duong"}})
+	movies = append(movies, Movie{ID: "1", Isbn: "435", Title: "one", Director: &Director{FirstName: "Dat", LastName: "Duong"}})
+	movies = append(movies, Movie{ID: "2", Isbn: "468", Title: "two", Director: &Director{FirstName: "Tu", LastName: "Duong"}})
 	r.HandleFunc("/movies", getAllMovies).Methods("GET")
 	r.HandleFunc("/movies/{id}", getByID).Methods("GET")
 	r.HandleFunc("/movies", createNewMovie).Methods("POST")
 	r.HandleFunc("/movies/{id}", updateMovie).Methods("PUT")
-	r.HandleFunc("/Movies/{id}", deleteMovie).Methods("DELETE")
+	r.HandleFunc("/movies/{id}", deleteMovie).Methods("DELETE")
 
 	fmt.Printf("Starting sever at Port:8000")
 	log.Fatal(http.ListenAndServe(":8000", r))
